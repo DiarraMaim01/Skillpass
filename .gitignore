@@ -1,0 +1,67 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Spring Boot ###
+# Fichiers de properties spécifiques
+application-dev.properties
+application-prod.properties
+application-local.properties
+
+# H2 Database
+*.mv.db
+*.trace.db
+
+# Logs
+logs/
+*.log
+log/
+zap.log
+
+# Fichiers temporaires
+tmp/
+temp/
+
+# Fichiers de cache
+.cache/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de checkpoint Docker
+docker-data/
+
+# Fichiers de coverage de test (Jacoco)
+*.exec
+*.ser

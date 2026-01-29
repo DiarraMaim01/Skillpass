@@ -2,6 +2,7 @@ package com.skillpass.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table (name = "options")
@@ -20,6 +21,16 @@ public class Option {
 
     // Relations
     @ManyToOne // je suis un enfant de la table question / plusieurs options par question
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id") // crée la colonne question_id en base
+    @ToString.Exclude
     private Question question;
+
+    // Méthode utilitaires
+    public void marquerCommeCorrecte() {
+        this.correcte = true;
+    }
+
+    public boolean estCorrecte() {
+        return this.correcte;
+    }
 }

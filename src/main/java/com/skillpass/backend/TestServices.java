@@ -86,6 +86,25 @@ public class TestServices {
                 }
             }
 
+            // Test suppression
+            System.out.println("\n7️⃣ Test suppression de question...");
+            try {
+                questionService.deleteQuestion(saved.getId());
+                System.out.println("✅ Question supprimée avec succès");
+            } catch (Exception e) {
+                System.out.println("⚠️ " + e.getMessage());
+            }
+
+           // Test mise à jour
+            System.out.println(" Test mise à jour de question");
+            Question updated = new Question();
+            updated.setTitre("Titre mis à jour");
+            updated.setPoints(10);
+
+            Question resultat = questionService.updateQuestion(saved.getId(), updated);
+            System.out.println("✅ Question mise à jour: " + resultat.getTitre() +
+                    " (" + resultat.getPoints() + " points)");
+
            // stats
 
             System.out.println(" Test statistiques..");

@@ -47,6 +47,60 @@ public class TestService {
 
     }
 
+    // modifier un test
+    public Test updateTest(Long id, Test updatedTest) {
+        Test existing = testRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Test non trouvé: " + id));
+
+        if (updatedTest.getTitre() != null) {
+            existing.setTitre(updatedTest.getTitre());
+        }
+
+        if (updatedTest.getDescription() != null) {
+            existing.setDescription(updatedTest.getDescription());
+        }
+
+        if (updatedTest.getDureeMinutes() != null && updatedTest.getDureeMinutes() > 0) {
+            existing.setDureeMinutes(updatedTest.getDureeMinutes());
+        }
+        return testRepository.save(existing);
+    }
+
+    // supprimer un test
+    public void deleteTest(Long id) {
+
+        if (!testRepository.existsById(id)) {
+            throw new IllegalArgumentException("Test non trouvé: " + id);
+        }
+
+        testRepository.deleteById(id);
+    }
+
+   // ajouter une question a un test
+    public Test addQuestionToTest(Long testId, Long questionId) {
+        Test test = testRepository.findById(testId)
+                .orElseThrow(() -> new IllegalArgumentException("Test non trouvé: " + testId));
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new IllegalArgumentException("Question non trouvée: " + questionId));
+
+        test.addQuestion(question);
+        return testRepository.save(test);
+    }
+
+
+    // supprimer une question d'un test
+    public Test removeQuestionFromTest(Long testId, Long questionId) {
+        Test test = testRepository.findById(testId)
+                .orElseThrow(() -> new IllegalArgumentException("Test non trouvé: " + testId));
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new IllegalArgumentException("Question non trouvée: " + questionId));
+
+        test.removeQuestion(question);
+        return testRepository.save(test);
+    }
+
     //calcul Score
 
     public int calculScoreTest (Test test, List<Long> selectedOptionId){
@@ -75,13 +129,15 @@ public class TestService {
         double percentage = (score * 100.0) / totalPoints;
 
         return String.format(
-                "🎯 Résultat du test : %s\n" +
-                        "📊 Score : %d/%d points (%.1f%%)\n" +
+                "Résultat du test : %s\n" +
+                        " Score : %d/%d points (%.1f%%)\n" +
                         "❓ Questions : %d\n" + "⏱️ Durée estimée : %d min",
                 test.getTitre(), score, totalPoints, percentage,
                 totalQuestions, test.getDureeMinutes()
         );
     }
+
+
 
 
 // methode tri

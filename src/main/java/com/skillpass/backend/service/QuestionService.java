@@ -85,6 +85,61 @@ public class QuestionService {
 
     }
 
+    // modifier une question
+    public Question updateQuestion(Long id, Question updatedQuestion) {
+
+        Question existing = questionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Question non trouvée: " + id));
+
+        if (updatedQuestion.getTitre() != null) {
+            existing.setTitre(updatedQuestion.getTitre());
+        }
+
+        if (updatedQuestion.getContenu() != null) {
+            existing.setContenu(updatedQuestion.getContenu());
+        }
+
+        if (updatedQuestion.getCategorie() != null) {
+            existing.setCategorie(updatedQuestion.getCategorie());
+        }
+
+        if (updatedQuestion.getNiveau() != null) {
+            existing.setNiveau(updatedQuestion.getNiveau());
+        }
+
+        if (updatedQuestion.getPoints() != null && updatedQuestion.getPoints() > 0) {
+            existing.setPoints(updatedQuestion.getPoints());
+        }
+
+        return questionRepository.save(existing);
+    }
+
+    //supprimer une question
+    public void deleteQuestion(Long id) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Question non trouvée: " + id));
+
+        if (question.getTests() != null && !question.getTests().isEmpty()) {
+            throw new IllegalStateException(
+                    "Impossible de supprimer la question ID " + id +
+                            ". Elle est utilisée dans " + question.getTests().size() + " test(s)."
+            );
+        }
+        questionRepository.deleteById(id);
+    }
+
+    // lister toutes les questions
+    public List<Question> getAllQuestions() {
+        return questionRepository.findAll();
+    }
+
+    //trouver une question par id
+    public Question getQuestionById(Long id) {
+        return questionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Question non trouvée: " + id));
+    }
+
+
 
     // Statistiques (KPIs)
     public String getStatistics() {

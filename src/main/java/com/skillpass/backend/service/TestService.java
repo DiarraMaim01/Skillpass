@@ -139,6 +139,10 @@ public class TestService {
 
 
 
+    public Test getTestById(Long id) {
+        return testRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Test non trouvé: " + id));
+    }
 
 // methode tri
 

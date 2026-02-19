@@ -34,6 +34,12 @@ public class Test {
     @ToString.Exclude
     private List<Question> questions;
 
+    //relation avec testResult
+
+    @OneToMany(mappedBy = "test")
+    @ToString.Exclude
+    private List<TestResult> results = new ArrayList<>();
+
     // Méthodes utilitaires pour la relation avec Question
 
     public void addQuestion(Question question) {

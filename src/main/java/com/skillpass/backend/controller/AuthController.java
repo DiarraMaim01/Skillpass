@@ -6,6 +6,10 @@ import com.skillpass.backend.dto.RegisterRequest;
 import com.skillpass.backend.entity.User;
 import com.skillpass.backend.repository.UserRepository;
 import com.skillpass.backend.security.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentification", description = "Gestion des comptes utilisateurs")
 public class AuthController {
 
     @Autowired
@@ -36,6 +41,12 @@ public class AuthController {
 
  //Login
     @PostMapping("/login")
+    @Operation(summary = "Se connecter",
+            description = "Authentification et réception d'un token JWT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Connexion réussie"),
+            @ApiResponse(responseCode = "401", description = "Email ou mot de passe incorrect")
+    })
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -59,6 +70,12 @@ public class AuthController {
 
    //creation de compte
     @PostMapping("/register")
+    @Operation(summary = "Créer un compte",
+            description = "Inscription d'un nouvel utilisateur (rôle USER par défaut)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Compte créé avec succès"),
+            @ApiResponse(responseCode = "400", description = "Email déjà utilisé ou données invalides")
+    })
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {

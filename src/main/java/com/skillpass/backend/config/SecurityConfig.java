@@ -4,6 +4,7 @@ import com.skillpass.backend.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,9 +43,23 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
 
 
-                        .requestMatchers("/api/questions/**").authenticated()
-                        .requestMatchers("/api/tests/**").authenticated()
-                        .requestMatchers("/api/options/**").authenticated()
+                        //Questions
+                        .requestMatchers(HttpMethod.GET, "/api/questions/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/questions/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/questions/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/questions/**").hasRole("ADMIN")
+
+                        //Tests
+                        .requestMatchers(HttpMethod.GET, "/api/tests/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/tests/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/tests/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tests/**").hasRole("ADMIN")
+
+                        //Options
+                        .requestMatchers(HttpMethod.GET, "/api/options/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/options/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/options/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/options/**").hasRole("ADMIN")
 
 
                         .anyRequest().authenticated()

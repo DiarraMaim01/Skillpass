@@ -1,6 +1,9 @@
 package com.skillpass.backend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -45,12 +48,14 @@ public class Question {
     }
 
     //relation avec Option
-    @OneToMany( mappedBy = "question", cascade = CascadeType.ALL) // mappedBy permet d'utiliser la relation deja etabli dans option
+    @OneToMany( mappedBy = "question",  cascade = CascadeType.ALL, orphanRemoval = true)// mappedBy permet d'utiliser la relation deja etabli dans option
+    @JsonIgnoreProperties("question")
     @ToString.Exclude
     private List<Option> options = new ArrayList<Option>();
 
     //relation avec Test
     @ManyToMany(mappedBy = "questions")
+    @JsonIgnore
     @ToString.Exclude
     private List<Test> tests;
 

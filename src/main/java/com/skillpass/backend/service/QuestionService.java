@@ -81,6 +81,8 @@ public class QuestionService {
             throw new IllegalArgumentException("Une question doit avoir au moins une bonne réponse");
         }
 
+        question.getOptions().forEach(option -> option.setQuestion(question));
+
         return questionRepository.save(question);
 
     }
@@ -109,6 +111,13 @@ public class QuestionService {
 
         if (updatedQuestion.getPoints() != null && updatedQuestion.getPoints() > 0) {
             existing.setPoints(updatedQuestion.getPoints());
+        }
+        if (updatedQuestion.getOptions() != null && !updatedQuestion.getOptions().isEmpty()) {
+            existing.getOptions().clear();  // supprime les anciennes options
+            updatedQuestion.getOptions().forEach(opt -> {
+                opt.setQuestion(existing);
+                existing.getOptions().add(opt);
+            });
         }
 
         return questionRepository.save(existing);

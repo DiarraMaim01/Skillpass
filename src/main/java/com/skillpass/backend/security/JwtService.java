@@ -77,4 +77,12 @@ public class JwtService {
         byte[] keyBytes = secretKey.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public String generateTokenWithClaims(UserDetails userDetails, String nom, String prenom) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("role", userDetails.getAuthorities());
+        extraClaims.put("nom", nom);
+        extraClaims.put("prenom", prenom);
+        return generateToken(extraClaims, userDetails);
+    }
 }

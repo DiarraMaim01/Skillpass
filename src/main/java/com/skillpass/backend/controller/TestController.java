@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tests")
@@ -50,8 +51,8 @@ public class TestController {
     public ResponseEntity<Test> getTest(@PathVariable Long id) {
         try {
             Test test = testService.getTestById(id);
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
+            return ResponseEntity.ok(test);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -117,25 +118,28 @@ public class TestController {
 
     //POST : calculer le score
     @PostMapping("/{testId}/calculate-score")
-    @Operation(summary = "Calculer un score",
-            description = "Calcule le score d'un utilisateur pour un test donné (USER + ADMIN)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Score calculé"),
-            @ApiResponse(responseCode = "400", description = "Données invalides"),
-            @ApiResponse(responseCode = "401", description = "Non authentifié")
-    })
-    public ResponseEntity<String> calculateScore(
+    public ResponseEntity<Map<String, Object>> calculateScore(
             @PathVariable Long testId,
             @RequestBody List<Long> selectedOptionIds) {
-
         try {
             Test test = testService.getTestById(testId);
-            return ResponseEntity.ok("Score calculé: 15/20");
+            int score = testService.calculScoreTest(test, selectedOptionIds);
+            int totalPoints = test.getQuestions().stream()
+                    .mapToInt(Question::getPoints)
+                    .sum();
+            int totalQuestions = test.getNombreQuestions();
+
+            Map<String, Object> result = new java.util.LinkedHashMap<>();
+            result.put("score", score);
+            result.put("totalPoints", totalPoints);
+            result.put("totalQuestions", totalQuestions);
+            result.put("pourcentage", Math.round((score * 100.0) / totalPoints));
+
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
-
     // DELETE :retirer une question d'un test
 
     @DeleteMapping("/{testId}/questions/{questionId}")
@@ -178,6 +182,37 @@ public class TestController {
         }
     }
 
+    // GET : questions d'un test pour le jouer (sans correcte)
+    @GetMapping("/{id}/questions")
+    @Operation(summary = "Récupérer les questions d'un test pour le jouer")
+    public ResponseEntity<List<Map<String, Object>>> getTestQuestions(@PathVariable Long id) {
+        try {
+            Test test = testService.getTestById(id);
+            List<Map<String, Object>> questions = test.getQuestions().stream()
+                    .map(q -> {
+                        Map<String, Object> qMap = new java.util.LinkedHashMap<>();
+                        qMap.put("id", q.getId());
+                        qMap.put("titre", q.getTitre());
+                        qMap.put("contenu", q.getContenu());
+                        qMap.put("points", q.getPoints());
+                        List<Map<String, Object>> options = q.getOptions().stream()
+                                .map(o -> {
+                                    Map<String, Object> oMap = new java.util.LinkedHashMap<>();
+                                    oMap.put("id", o.getId());
+                                    oMap.put("texte", o.getTexte());
+                                    // pas de "correcte" !
+                                    return oMap;
+                                })
+                                .collect(java.util.stream.Collectors.toList());
+                        qMap.put("options", options);
+                        return qMap;
+                    })
+                    .collect(java.util.stream.Collectors.toList());
+            return ResponseEntity.ok(questions);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
 

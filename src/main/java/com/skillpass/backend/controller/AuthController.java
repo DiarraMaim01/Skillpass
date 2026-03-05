@@ -56,10 +56,12 @@ public class AuthController {
         );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        String token = jwtService.generateToken(userDetails);
-
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
+
+        String token = jwtService.generateTokenWithClaims(userDetails, user.getNom(), user.getPrenom());
+
+
 
         return ResponseEntity.ok(new AuthResponse(
                 token,
@@ -98,7 +100,7 @@ public class AuthController {
                 .roles(savedUser.getRole().name())
                 .build();
 
-        String token = jwtService.generateToken(userDetails);
+        String token = jwtService.generateTokenWithClaims(userDetails, savedUser.getNom(), savedUser.getPrenom());
 
         return ResponseEntity.ok(new AuthResponse(
                 token,

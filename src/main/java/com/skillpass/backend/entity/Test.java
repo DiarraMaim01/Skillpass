@@ -1,5 +1,6 @@
 package com.skillpass.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -31,12 +32,14 @@ public class Test {
             joinColumns = @JoinColumn (name = "test_id"), // la colonne test_id reference id de Test
             inverseJoinColumns = @JoinColumn (name = "question_id") // la colle question_id reference Question
     )
+    @JsonIgnore
     @ToString.Exclude
     private List<Question> questions;
 
     //relation avec testResult
 
     @OneToMany(mappedBy = "test")
+    @JsonIgnore
     @ToString.Exclude
     private List<TestResult> results = new ArrayList<>();
 

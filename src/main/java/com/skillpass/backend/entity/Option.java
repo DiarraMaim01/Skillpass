@@ -1,5 +1,7 @@
 package com.skillpass.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -22,6 +24,7 @@ public class Option {
     // Relations
     @ManyToOne // je suis un enfant de la table question / plusieurs options par question
     @JoinColumn(name = "question_id") // crée la colonne question_id en base
+    @JsonIgnoreProperties("options")
     @ToString.Exclude
     private Question question;
 

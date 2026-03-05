@@ -111,7 +111,7 @@ public class QuestionController {
     }
 
     // PUT : modifier une question
-    @PutMapping
+    @PutMapping("/{id}")
     @Operation(summary = "Mettre à jour une question",
             description = "Modifie une question existante (ADMIN uniquement)")
     @ApiResponses(value = {
@@ -134,7 +134,7 @@ public class QuestionController {
     }
 
     // DELETE
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Operation(summary = "Supprimer une question",
             description = "Supprime une question par son ID (ADMIN uniquement)")
     @ApiResponses(value = {

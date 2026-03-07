@@ -1,0 +1,65 @@
+# La version du format Docker Compose
+services:
+
+  # ============================================
+  # CONTENEUR 1 : PostgreSQL
+  # La base de données de production
+  # ============================================
+  postgres:
+    image: postgres:16-alpine        # image officielle PostgreSQL légère
+    container_name: skillpass-db
+    environment:
+      POSTGRES_DB: skillpassdb       # nom de la base
+      POSTGRES_USER: skillpass       # utilisateur
+      POSTGRES_PASSWORD: skillpass123 # mot de passe
+    ports:
+      - "5432:5432"                  # port local:port conteneur
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # persistance des données
+    networks:
+      - skillpass-network
+
+  # ============================================
+  # CONTENEUR 2 : Spring Boot Backend
+  # ============================================
+  backend:
+    build: .                         # construire depuis le Dockerfile ici
+    container_name: skillpass-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod   # active le profil prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/skillpassdb
+      SPRING_DATASOURCE_USERNAME: skillpass
+      SPRING_DATASOURCE_PASSWORD: skillpass123
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres                     # attend que postgres démarre avant
+    networks:
+      - skillpass-network
+
+  # ============================================
+  # CONTENEUR 3 : Angular Frontend
+  # ============================================
+  frontend:
+    build:
+      context: ../skillpass-frontend  # chemin vers le projet Angular
+    container_name: skillpass-frontend
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - skillpass-network
+
+# Volume pour persister les données PostgreSQL
+# Sans ça, toutes les données disparaissent au redémarrage
+volumes:
+  postgres_data:
+
+# Réseau interne entre les conteneurs
+# Les conteneurs se parlent via leurs noms (postgres, backend, frontend)
+networks:
+  skillpass-network:
+    driver: bridge

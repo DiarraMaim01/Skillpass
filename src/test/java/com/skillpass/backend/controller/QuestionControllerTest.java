@@ -2,6 +2,7 @@ package com.skillpass.backend.controller;
 
 import com.skillpass.backend.entity.Option;
 import com.skillpass.backend.entity.Question;
+import com.skillpass.backend.repository.TestRepository;
 import com.skillpass.backend.repository.UserRepository;
 import com.skillpass.backend.entity.User;
 import com.skillpass.backend.security.JwtService;
@@ -42,6 +43,9 @@ class QuestionControllerTest {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private TestRepository testRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -57,6 +61,7 @@ class QuestionControllerTest {
 
     @BeforeEach
     void setUp() {
+        testRepository.deleteAll();
         questionRepository.deleteAll();
         userRepository.deleteAll();
 

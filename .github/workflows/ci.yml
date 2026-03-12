@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
       - name: Run tests
-        run: mvn test -Dfile.encoding=UTF-8
+        run: mvn test -Dfile.encoding=UTF-8 -e
 
       - name: Check coverage
         run: mvn jacoco:check -Dfile.encoding=UTF-8
